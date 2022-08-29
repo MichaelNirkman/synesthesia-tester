@@ -1,0 +1,34 @@
+<html>
+
+<head>
+    <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body onload="start()">
+    <h1>Time for a test</h1>
+
+    <div class="container">
+        <div id="form-area" class="form-area">
+            <p id="current-number" class="current-number"></p>
+        </div>
+
+        <div id="thankyou" style="display:none">
+            <p>Thank you for your input :)</p>
+            <button class="reset-button" onclick="resetForm()">Add another</button>
+            <button class="reset-button" onclick="showResults()">Show results</button>
+        </div>
+
+        <div id="results" style="display:none">
+            <h2>Results</h2>
+            <div id="result-area">
+
+            </div>
+        </div>
+
+    </div>
+
+    <script type="text/javascript" src="js/functions.js"></script>
+
+</body>
+
+</html>
