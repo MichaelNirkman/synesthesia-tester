@@ -1,8 +1,7 @@
 function start() {
     initialize();
     drawColors();
-
-    console.log("we are running");
+    //showResults();
 }
 
 function initialize() {
@@ -12,6 +11,8 @@ function initialize() {
     if (JSON.parse(localStorage.getItem("allchoices")) === null) {
         localStorage.setItem("allchoices", JSON.stringify([]));
     }
+
+    updateTitle("Time for a test");
 
     setCurrentNumber();
 }
@@ -49,13 +50,15 @@ function addToTotal(choices) {
 }
 
 function drawColors() {
+    updateTitle("Time for a test");
+
     var formarea = document.getElementById("form-area");
 
     colors.forEach(function(color) {
         var newbutton = document.createElement("button");
         newbutton.className = "choice-button";
         newbutton.style.backgroundColor = color.color;
-        newbutton.onclick = function() {
+        newbutton[eventType] = function() {
             makeSelection(color.color);
         };
         formarea.appendChild(newbutton);
@@ -66,7 +69,7 @@ function drawColors() {
     var cancelbutton = document.createElement("button");
     cancelbutton.innerHTML = "Cancel";
     cancelbutton.className = "reset-button";
-    cancelbutton.onclick = function() {
+    cancelbutton[eventType] = function() {
         resetForm();
     };
     formarea.appendChild(cancelbutton);
@@ -82,6 +85,7 @@ function restoreColors() {
 
 function displayThankYou() {
     document.getElementById("thankyou").style.display = "block";
+    updateTitle("Thank you");
 }
 
 function removeThankYou() {
@@ -99,6 +103,8 @@ function buildResults() {
     var allitems = JSON.parse(localStorage.getItem("allchoices"));
     var resultarea = document.getElementById("result-area");
 
+    updateTitle("Results");
+
     for (var i = settings["start-number"]; i < settings["end-number"] + 1; i++) {
         var entry = document.createElement("div");
         entry.className = "result-row";
@@ -109,6 +115,7 @@ function buildResults() {
         choicelist.push(getPercentages(colorRow));
 
         var choiceTitle = createChoiceTitle(i);
+        choiceTitle.className = "choice-title";
         entry.appendChild(choiceTitle);
 
         choicelist.forEach(function(choices) {
@@ -116,7 +123,16 @@ function buildResults() {
                 var u = settings["start-number"]; u < settings["end-number"] + 1; u++
             ) {
                 var choice;
-                if (choices[u - 1]) {
+                if (choices[u - 1] && u == settings["start-number"]) {
+                    choice = choices[u - 1];
+                    var choiceElement = createColorBlock(
+                        choice.color,
+                        choice.percentage,
+                        true
+                    );
+                    entry.appendChild(choiceElement);
+                    continue;
+                } else if (choices[u - 1]) {
                     choice = choices[u - 1];
                 } else {
                     choice = { color: "none", percentage: "" };
@@ -134,7 +150,7 @@ function buildResults() {
     var backbutton = document.createElement("button");
     backbutton.innerHTML = "Return";
     backbutton.className = "reset-button";
-    backbutton.onclick = function() {
+    backbutton[eventType] = function() {
         resetForm();
     };
 
@@ -154,9 +170,13 @@ function createChoiceTitle(text) {
     return titleItem;
 }
 
-function createColorBlock(color, text) {
+function createColorBlock(color, text, first = false) {
     var element = document.createElement("span");
-    element.className = "result-box";
+    if (first) {
+        element.className = "result-box first";
+    } else {
+        element.className = "result-box";
+    }
     element.style.backgroundColor = color;
     element.innerHTML = text;
     return element;
@@ -206,6 +226,13 @@ function resetForm() {
     restoreColors();
     initialize();
 }
+
+function updateTitle(text) {
+    document.getElementById("main-title").innerHTML = text;
+}
+
+var supportsTouch = "ontouchstart" in window || navigator.msMaxTouchPoints;
+var eventType = supportsTouch ? "ontouchstart" : "click";
 
 var settings = {
     "start-number": 1,
