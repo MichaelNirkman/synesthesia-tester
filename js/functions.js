@@ -206,6 +206,17 @@ function getPercentages(colors) {
     return processedColors;
 }
 
+function removeEverything() {
+    if (confirm("Are you sure you want to delete everything?")) {
+        resetTotal();
+        resetForm();
+    }
+}
+
+function resetTotal() {
+    localStorage.setItem("allchoices", JSON.stringify([]));
+}
+
 function mode(arr) {
     return arr
         .sort(
